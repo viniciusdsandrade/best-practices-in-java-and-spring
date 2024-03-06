@@ -56,7 +56,8 @@ public class AdopetConsoleApplication {
             case 3 -> listarPetsDoAbrigo();
             case 4 -> importarPetsDoAbrigo();
             case 5 -> {
-                break;
+                System.out.println("Saindo do programa...");
+                System.exit(0);
             }
             default -> System.out.println("NÚMERO INVÁLIDO!");
         }
