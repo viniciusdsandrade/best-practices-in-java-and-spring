@@ -46,7 +46,7 @@ public class AdopetConsoleApplication {
 
     private static void processarOpcao(AbrigoService abrigoService, PetService petService, int opcaoEscolhida) throws IOException, InterruptedException {
         switch (opcaoEscolhida) {
-            case 1 -> abrigoService.listarAbrigos();
+            case 1 -> abrigoService.listarAbrigo();
             case 2 -> abrigoService.cadastrarAbrigo();
             case 3 -> petService.listarPetsDoAbrigo();
             case 4 -> petService.importarPetsDoAbrigo();

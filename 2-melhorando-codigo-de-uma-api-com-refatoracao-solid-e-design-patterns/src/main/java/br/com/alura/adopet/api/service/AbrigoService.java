@@ -1,13 +1,12 @@
 package br.com.alura.adopet.api.service;
 
-import br.com.alura.adopet.api.dto.abrigo.CadastroAbrigoDto;
-import br.com.alura.adopet.api.model.Adocao;
+
+import br.com.alura.adopet.api.model.Abrigo;
+import br.com.alura.adopet.api.model.Pet;
+import jakarta.persistence.EntityNotFoundException;
+
+import java.util.List;
 
 public interface AbrigoService {
-    
-    void cadastrar(CadastroAbrigoDto dto);
 
-    void listarPets(Adocao adocao);
-
-    void cadastrarPet(Adocao adocao);
 }

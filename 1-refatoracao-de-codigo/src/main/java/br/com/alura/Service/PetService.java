@@ -1,23 +1,19 @@
 package br.com.alura.Service;
 
 import br.com.alura.client.ClientHttpConfiguration;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import br.com.alura.entity.Pet;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class PetService {
-
-    private static final String BASE_URL = "http://localhost:8080/abrigos";
 
     private ClientHttpConfiguration client;
 
@@ -26,63 +22,42 @@ public class PetService {
     }
 
     public void listarPetsDoAbrigo() throws IOException, InterruptedException {
-        String idOuNome = obterIdOuNomeAbrigo();
-
-        HttpResponse<String> response = enviarRequisicaoListarPets(idOuNome);
-
-        if (response != null)
-            processarRespostaListarPets(response);
-    }
-
-    public void importarPetsDoAbrigo() throws InterruptedException {
-        String idOuNome = obterIdOuNomeAbrigo();
-        String nomeArquivo = obterNomeArquivoCSV();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(nomeArquivo))) {
-            importarPetsDoArquivo(reader, idOuNome);
-        } catch (IOException e) {
-            System.out.println("Erro ao carregar o arquivo: " + nomeArquivo);
-        }
-    }
-
-    private String obterIdOuNomeAbrigo() {
         System.out.println("Digite o id ou nome do abrigo:");
-        return new Scanner(System.in).nextLine();
-    }
+        String idOuNome = new Scanner(System.in).nextLine();
 
-    private String obterNomeArquivoCSV() {
-        System.out.println("Digite o nome do arquivo CSV:");
-        return new Scanner(System.in).nextLine();
-    }
-
-    private HttpResponse<String> enviarRequisicaoListarPets(String idOuNome) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/" + idOuNome + "/pets"))
-                .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
-    private void processarRespostaListarPets(HttpResponse<String> response) {
+        String uri = "http://localhost:8080/abrigos/" +idOuNome +"/pets";
+        HttpResponse<String> response = ClientHttpConfiguration.dispararRequisicaoGet(uri);
         int statusCode = response.statusCode();
         if (statusCode == 404 || statusCode == 500) {
             System.out.println("ID ou nome não cadastrado!");
-            return;
         }
-        JsonArray jsonArray = JsonParser.parseString(response.body()).getAsJsonArray();
+        String responseBody = response.body();
+        Pet[] pets = new ObjectMapper().readValue(responseBody, Pet[].class);
+        List<Pet> petList = Arrays.stream(pets).toList();
         System.out.println("Pets cadastrados:");
-        for (JsonElement element : jsonArray) {
-            JsonObject jsonObject = element.getAsJsonObject();
-            long id = jsonObject.get("id").getAsLong();
-            String tipo = jsonObject.get("tipo").getAsString();
-            String nome = jsonObject.get("nome").getAsString();
-            String raca = jsonObject.get("raca").getAsString();
-            int idade = jsonObject.get("idade").getAsInt();
-            System.out.println(id + " - " + tipo + " - " + nome + " - " + raca + " - " + idade + " ano(s)");
+        for (Pet pet : petList) {
+            long id = pet.getId();
+            String tipo = pet.getTipo();
+            String nome = pet.getNome();
+            String raca = pet.getRaca();
+            int idade = pet.getIdade();
+            System.out.println(id +" - " +tipo +" - " +nome +" - " +raca +" - " +idade +" ano(s)");
         }
     }
 
-    private void importarPetsDoArquivo(BufferedReader reader, String idOuNome) throws IOException, InterruptedException {
+    public void importarPetsDoAbrigo() throws IOException, InterruptedException {
+        System.out.println("Digite o id ou nome do abrigo:");
+        String idOuNome = new Scanner(System.in).nextLine();
+
+        System.out.println("Digite o nome do arquivo CSV:");
+        String nomeArquivo = new Scanner(System.in).nextLine();
+
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(nomeArquivo));
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar o arquivo: " +nomeArquivo);
+        }
         String line;
         while ((line = reader.readLine()) != null) {
             String[] campos = line.split(",");
@@ -91,18 +66,26 @@ public class PetService {
             String raca = campos[2];
             int idade = Integer.parseInt(campos[3]);
             String cor = campos[4];
-            float peso = Float.parseFloat(campos[5]);
+            Float peso = Float.parseFloat(campos[5]);
 
-            JsonObject json = criarJsonPet(tipo, nome, raca, idade, cor, peso);
+            Pet pet = new Pet(tipo, nome, raca, idade, cor, peso);
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("tipo", tipo);
+            jsonObject.addProperty("nome", nome);
+            jsonObject.addProperty("raca", raca);
+            jsonObject.addProperty("idade", idade);
+            jsonObject.addProperty("cor", cor);
+            jsonObject.addProperty("peso", peso);
 
-            HttpResponse<String> response = enviarRequisicao(idOuNome, json);
 
+            String uri = "http://localhost:8080/abrigos/" + idOuNome + "/pets";
+            HttpResponse<String> response = ClientHttpConfiguration.dispararRequisicaoPost(uri, jsonObject);
             int statusCode = response.statusCode();
             String responseBody = response.body();
             if (statusCode == 200) {
                 System.out.println("Pet cadastrado com sucesso: " + nome);
             } else if (statusCode == 404) {
-                System.out.println("Id ou nome do abrigo não encontrado!");
+                System.out.println("Id ou nome do abrigo não encontado!");
                 break;
             } else if (statusCode == 400 || statusCode == 500) {
                 System.out.println("Erro ao cadastrar o pet: " + nome);
@@ -110,26 +93,6 @@ public class PetService {
                 break;
             }
         }
-    }
-
-    private JsonObject criarJsonPet(String tipo, String nome, String raca, int idade, String cor, float peso) {
-        JsonObject json = new JsonObject();
-        json.addProperty("tipo", tipo.toUpperCase());
-        json.addProperty("nome", nome);
-        json.addProperty("raca", raca);
-        json.addProperty("idade", idade);
-        json.addProperty("cor", cor);
-        json.addProperty("peso", peso);
-        return json;
-    }
-
-    private HttpResponse<String> enviarRequisicao(String idOuNome, JsonObject json) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/" + idOuNome + "/pets"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
-                .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+        reader.close();
     }
 }

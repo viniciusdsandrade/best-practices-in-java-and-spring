@@ -1,17 +1,16 @@
 package br.com.alura.adopet.api.service;
 
-import br.com.alura.adopet.api.dto.adocao.AprovacaoAdocaoDto;
-import br.com.alura.adopet.api.dto.adocao.ReprovacaoAdocaoDto;
-import br.com.alura.adopet.api.dto.adocao.SolicitacaoAdocaoDto;
-import br.com.alura.adopet.api.exception.AdocaoException;
-import br.com.alura.adopet.api.exception.EmailUnsedException;
-import org.jetbrains.annotations.NotNull;
+import br.com.alura.adopet.api.model.Adocao;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface AdocaoService {
-    
-    void solicitar(@NotNull SolicitacaoAdocaoDto dto) throws EmailUnsedException, AdocaoException;
 
-    void aprovar(@NotNull AprovacaoAdocaoDto dto) throws EmailUnsedException;
+    @Transactional
+    void solicitar(Adocao adocao);
 
-    void reprovar(@NotNull ReprovacaoAdocaoDto dto) throws EmailUnsedException;
+    @Transactional
+    void aprovar(Adocao adocao);
+
+    @Transactional
+    void reprovar(Adocao adocao);
 }

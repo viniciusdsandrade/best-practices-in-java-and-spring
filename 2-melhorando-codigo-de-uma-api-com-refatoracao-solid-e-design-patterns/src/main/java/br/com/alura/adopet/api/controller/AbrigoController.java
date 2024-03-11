@@ -1,47 +1,41 @@
 package br.com.alura.adopet.api.controller;
 
-import br.com.alura.adopet.api.dto.abrigo.CadastroAbrigoDto;
 import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.model.Pet;
-import br.com.alura.adopet.api.service.AbrigoService;
+import br.com.alura.adopet.api.repository.AbrigoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.jetbrains.annotations.Contract;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/abrigos")
 public class AbrigoController {
-    
-    private final AbrigoService abrigoService;
-    
-    @Contract(pure = true)
-    public AbrigoController(AbrigoService abrigoService) {
-        this.abrigoService = abrigoService;
-    }
+
+    @Autowired
+    private AbrigoRepository repository;
 
     @GetMapping
     public ResponseEntity<List<Abrigo>> listar() {
-        return ResponseEntity.ok(abrigoService.listar());
+        return ResponseEntity.ok(repository.findAll());
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<String> cadastrar(@RequestBody @Valid CadastroAbrigoDto dto) {
-        try{
-            abrigoService.cadastrar(dto);
+    public ResponseEntity<String> cadastrar(@RequestBody @Valid Abrigo abrigo) {
+        boolean nomeJaCadastrado = repository.existsByNome(abrigo.getNome());
+        boolean telefoneJaCadastrado = repository.existsByTelefone(abrigo.getTelefone());
+        boolean emailJaCadastrado = repository.existsByEmail(abrigo.getEmail());
+
+        if (nomeJaCadastrado || telefoneJaCadastrado || emailJaCadastrado) {
+            return ResponseEntity.badRequest().body("Dados já cadastrados para outro abrigo!");
+        } else {
+            repository.save(abrigo);
             return ResponseEntity.ok().build();
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -89,4 +83,5 @@ public class AbrigoController {
             }
         }
     }
+
 }

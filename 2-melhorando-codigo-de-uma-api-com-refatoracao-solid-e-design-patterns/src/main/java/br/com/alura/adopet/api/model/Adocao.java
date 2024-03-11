@@ -1,80 +1,116 @@
 package br.com.alura.adopet.api.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Getter
-@NoArgsConstructor
-@Entity(name = "adocoes")
-@Table(
-        name = "tb_adocao",
-        schema = "db_adoPet"
-)
+@Entity(name = "Adocao")
+@Table(name = "tb_adocao",
+        schema = "db_adopet")
 public class Adocao {
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY,
-            generator = "adocao_sequence"
-    )
-    @Column(columnDefinition = "BIGINT UNSIGNED")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(columnDefinition = "DATETIME")
-    @EqualsAndHashCode.Include
+    @Column(name = "data")
     private LocalDateTime data;
 
-    @JoinColumn(columnDefinition = "BIGINT UNSIGNED")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @ManyToOne
+    @JsonBackReference("tutor_adocoes")
+    @JoinColumn(name = "tutor_id")
     private Tutor tutor;
 
-    @JoinColumn(columnDefinition = "BIGINT UNSIGNED")
-    @OneToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "pet_id")
+    @JsonManagedReference("adocao_pets")
     private Pet pet;
 
-    @Column(columnDefinition = "TEXT")
+    @NotBlank
+    @Column(name = "motivo")
     private String motivo;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition =
-            "ENUM('AGUARDANDO_AVALIACAO', " +
-                    "'APROVADO', " +
-                    "'REPROVADO')")
+    @Column(name = "status")
     private StatusAdocao status;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "justificativa_status")
     private String justificativaStatus;
 
-    public Adocao(Tutor tutor, Pet pet, String motivo) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Adocao adocao = (Adocao) o;
+        return Objects.equals(id, adocao.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getData() {
+        return data;
+    }
+
+    public void setData(LocalDateTime data) {
+        this.data = data;
+    }
+
+    public Tutor getTutor() {
+        return tutor;
+    }
+
+    public void setTutor(Tutor tutor) {
         this.tutor = tutor;
+    }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    public void setPet(Pet pet) {
         this.pet = pet;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
         this.motivo = motivo;
-        this.data = LocalDateTime.now();
-        this.status = StatusAdocao.AGUARDANDO_AVALIACAO;
     }
 
-    public void marcarComoAprovado() {
-        this.status = StatusAdocao.APROVADO;
+    public StatusAdocao getStatus() {
+        return status;
     }
 
-    public void marcarComoReprovado(String justificativa) {
-        this.status = StatusAdocao.REPROVADO;
-        this.justificativaStatus = justificativa;
+    public void setStatus(StatusAdocao status) {
+        this.status = status;
+    }
+
+    public String getJustificativaStatus() {
+        return justificativaStatus;
+    }
+
+    public void setJustificativaStatus(String justificativaStatus) {
+        this.justificativaStatus = justificativaStatus;
     }
 }

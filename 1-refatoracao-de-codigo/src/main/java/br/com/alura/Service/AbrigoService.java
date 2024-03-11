@@ -1,18 +1,18 @@
 package br.com.alura.Service;
 
 import br.com.alura.client.ClientHttpConfiguration;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import br.com.alura.entity.Abrigo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class AbrigoService {
-
-    private static final String BASE_URL = "http://localhost:8080/abrigos";
 
     private ClientHttpConfiguration client;
 
@@ -20,58 +20,45 @@ public class AbrigoService {
         this.client = client;
     }
 
-    public void listarAbrigos() throws IOException, InterruptedException {
-        HttpResponse<String> response = ClientHttpConfiguration.dispararRequisicaoGet(BASE_URL);
-        JsonArray jsonArray = JsonParser.parseString(response.body()).getAsJsonArray();
+    public void listarAbrigo() throws IOException, InterruptedException {
+        String uri = "http://localhost:8080/abrigos";
+        HttpResponse<String> response = ClientHttpConfiguration.dispararRequisicaoGet(uri);
+        String responseBody = response.body();
+        Abrigo[] abrigos = new ObjectMapper().readValue(responseBody, Abrigo[].class);
+        List<Abrigo> abrigoList = Arrays.stream(abrigos).toList();
+        if (abrigoList.isEmpty()) {
+            System.out.println("Não há abrigos cadastrados");
+        } else {
+            mostrarAbrigos(abrigoList);
+        }
+    }
+
+    private void mostrarAbrigos(List<Abrigo> abrigos) {
         System.out.println("Abrigos cadastrados:");
-        for (JsonElement element : jsonArray) {
-            JsonObject jsonObject = element.getAsJsonObject();
-            long id = jsonObject.get("id").getAsLong();
-            String nome = jsonObject.get("nome").getAsString();
-            System.out.println(id + " - " + nome);
+        for (Abrigo abrigo : abrigos) {
+            long id = abrigo.getId();
+            String nome = abrigo.getNome();
+            System.out.println(id +" - " +nome);
         }
     }
 
     public void cadastrarAbrigo() throws IOException, InterruptedException {
-        String nome = obterNomeAbrigo();
-        String telefone = obterTelefoneAbrigo();
-        String email = obterEmailAbrigo();
-
-        JsonObject json = criarJsonAbrigo(nome, telefone, email);
-
-        HttpResponse<String> response = enviarRequisicaoCadastrarAbrigo(json);
-
-        processarRespostaCadastrarAbrigo(response);
-    }
-
-    private String obterNomeAbrigo() {
         System.out.println("Digite o nome do abrigo:");
-        return new Scanner(System.in).nextLine();
-    }
-
-    private String obterTelefoneAbrigo() {
+        String nome = new Scanner(System.in).nextLine();
         System.out.println("Digite o telefone do abrigo:");
-        return new Scanner(System.in).nextLine();
-    }
-
-    private String obterEmailAbrigo() {
+        String telefone = new Scanner(System.in).nextLine();
         System.out.println("Digite o email do abrigo:");
-        return new Scanner(System.in).nextLine();
-    }
+        String email = new Scanner(System.in).nextLine();
 
-    private JsonObject criarJsonAbrigo(String nome, String telefone, String email) {
-        JsonObject json = new JsonObject();
-        json.addProperty("nome", nome);
-        json.addProperty("telefone", telefone);
-        json.addProperty("email", email);
-        return json;
-    }
+        Abrigo abrigo = new Abrigo(nome, telefone, email);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("nome", abrigo.getNome());
+        jsonObject.addProperty("telefone", abrigo.getTelefone());
+        jsonObject.addProperty("email", abrigo.getEmail());
 
-    private HttpResponse<String> enviarRequisicaoCadastrarAbrigo(JsonObject json) throws IOException, InterruptedException {
-        return ClientHttpConfiguration.dispararRequisicaoPost(BASE_URL, json);
-    }
 
-    private void processarRespostaCadastrarAbrigo(HttpResponse<String> response) {
+        String uri = "http://localhost:8080/abrigos";
+        HttpResponse<String> response = ClientHttpConfiguration.dispararRequisicaoPost(uri, jsonObject);
         int statusCode = response.statusCode();
         String responseBody = response.body();
         if (statusCode == 200) {
