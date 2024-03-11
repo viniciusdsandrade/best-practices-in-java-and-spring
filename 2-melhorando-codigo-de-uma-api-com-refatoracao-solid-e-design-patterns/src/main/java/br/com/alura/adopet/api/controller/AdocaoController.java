@@ -1,6 +1,8 @@
 package br.com.alura.adopet.api.controller;
 
-import br.com.alura.adopet.api.model.Adocao;
+import br.com.alura.adopet.api.dto.adocao.AprovacaoAdocaoDto;
+import br.com.alura.adopet.api.dto.adocao.ReprovacaoAdocaoDto;
+import br.com.alura.adopet.api.dto.adocao.SolicitacaoAdocaoDto;
 import br.com.alura.adopet.api.service.AdocaoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +22,32 @@ public class AdocaoController {
     }
 
     @PostMapping
-    public ResponseEntity<String> solicitar(@RequestBody @Valid Adocao adocao) {
-        adocaoService.solicitar(adocao);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> solicitar(@RequestBody @Valid SolicitacaoAdocaoDto adocao) {
+        try {
+            adocaoService.solicitar(adocao);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/aprovar")
-    public ResponseEntity<String> aprovar(@RequestBody @Valid Adocao adocao) {
-        adocaoService.aprovar(adocao);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> aprovar(@RequestBody @Valid AprovacaoAdocaoDto adocao) {
+        try {
+            adocaoService.aprovar(adocao);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/reprovar")
-    public ResponseEntity<String> reprovar(@RequestBody @Valid Adocao adocao) {
-        adocaoService.reprovar(adocao);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> reprovar(@RequestBody @Valid ReprovacaoAdocaoDto adocao) {
+        try {
+            adocaoService.reprovar(adocao);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

@@ -33,21 +33,31 @@ public class Tutor {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(mappedBy = "tutor", fetch = FetchType.EAGER)
-    @JsonManagedReference("tutor_adocoes")
+    @OneToMany(mappedBy = "tutor")
     private List<Adocao> adocoes;
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null) return false;
+        if (this.getClass() != o.getClass()) return false;
+
         Tutor tutor = (Tutor) o;
+
         return Objects.equals(id, tutor.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        final int prime = 31;
+        int hash = 1;
+
+        hash *= prime + ((id == null) ? 0 : id.hashCode());
+
+        if (hash < 0) hash *= -1;
+
+        return hash;
     }
 
     public Long getId() {

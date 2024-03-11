@@ -1,3 +1,1 @@
-DROP DATABASE IF EXISTS db_adopet;
-CREATE DATABASE IF NOT EXISTS db_adopet;
-USE db_adopet;
+1
