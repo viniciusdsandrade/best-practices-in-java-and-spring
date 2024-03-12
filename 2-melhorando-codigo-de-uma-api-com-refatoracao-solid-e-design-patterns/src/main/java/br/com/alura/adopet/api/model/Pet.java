@@ -1,12 +1,19 @@
 package br.com.alura.adopet.api.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 
+import static br.com.alura.adopet.api.service.ShallowOrDeepCopy.verifyAndCopy;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity(name = "Pet")
 @Table(name = "tb_pet",
         schema = "db_adopet")
@@ -14,136 +21,87 @@ public class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
+    @NotNull(message = "O tipo é obrigatório")
     @Enumerated(EnumType.STRING)
-    @NotNull
-    @Column(name = "tipo")
     private TipoPet tipo;
 
-    @NotBlank
-    @Column(name = "nome")
+    @NotBlank(message = "O nome é obrigatório")
     private String nome;
 
-    @NotBlank
-    @Column(name = "raca")
+    @NotBlank(message = "A raça é obrigatória")
     private String raca;
 
-    @NotNull
-    @Column(name = "idade")
+    @NotNull(message = "A idade é obrigatória")
     private Integer idade;
 
-    @NotBlank
-    @Column(name = "cor")
+    @NotBlank(message = "A cor é obrigatória")
     private String cor;
 
-    @NotNull
-    @Column(name = "peso")
+    @NotNull(message = "O peso é obrigatório")
     private Float peso;
 
-    @Column(name = "adotado")
     private Boolean adotado;
 
     @ManyToOne
-    @JsonBackReference("abrigo_pets")
     @JoinColumn(name = "abrigo_id")
     private Abrigo abrigo;
 
     @OneToOne(mappedBy = "pet")
-    @JsonBackReference("adocao_pets")
     private Adocao adocao;
+
+    public Pet(Pet copy) {
+        if (copy == null) throw new IllegalArgumentException("Pet não pode ser nulo");
+
+        this.id = (Long) verifyAndCopy(copy.id);
+        this.tipo = (TipoPet) verifyAndCopy(copy.tipo);
+        this.nome = (String) verifyAndCopy(copy.nome);
+        this.raca = (String) verifyAndCopy(copy.raca);
+        this.idade = (Integer) verifyAndCopy(copy.idade);
+        this.cor = (String) verifyAndCopy(copy.cor);
+        this.peso = (Float) verifyAndCopy(copy.peso);
+        this.adotado = (Boolean) verifyAndCopy(copy.adotado);
+        this.abrigo = (Abrigo) verifyAndCopy(copy.abrigo);
+        this.adocao = (Adocao) verifyAndCopy(copy.adocao);
+    }
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pet pet = (Pet) o;
-        return Objects.equals(id, pet.id);
+        if (o == null) return false;
+        if (this.getClass() != o.getClass()) return false;
+
+        Pet that = (Pet) o;
+
+        return Objects.equals(this.id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        final int prime = 31;
+        int hash = 1;
+
+        hash *= prime + ((this.id == null) ? 0 : this.id.hashCode());
+
+        if (hash < 0) hash *= -1;
+
+        return hash;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public TipoPet getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoPet tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getRaca() {
-        return raca;
-    }
-
-    public void setRaca(String raca) {
-        this.raca = raca;
-    }
-
-    public Integer getIdade() {
-        return idade;
-    }
-
-    public void setIdade(Integer idade) {
-        this.idade = idade;
-    }
-
-    public String getCor() {
-        return cor;
-    }
-
-    public void setCor(String cor) {
-        this.cor = cor;
-    }
-
-    public Float getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Float peso) {
-        this.peso = peso;
-    }
-
-    public Boolean getAdotado() {
-        return adotado;
-    }
-
-    public void setAdotado(Boolean adotado) {
-        this.adotado = adotado;
-    }
-
-    public Abrigo getAbrigo() {
-        return abrigo;
-    }
-
-    public void setAbrigo(Abrigo abrigo) {
-        this.abrigo = abrigo;
-    }
-
-    public Adocao getAdocao() {
-        return adocao;
-    }
-
-    public void setAdocao(Adocao adocao) {
-        this.adocao = adocao;
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\": " + this.id +
+                ", \"tipo\": \"" + this.tipo + "\"" +
+                ", \"nome\": \"" + this.nome + "\"" +
+                ", \"raca\": \"" + this.raca + "\"" +
+                ", \"idade\": " + this.idade +
+                ", \"cor\": \"" + this.cor + "\"" +
+                ", \"peso\": " + this.peso +
+                ", \"adotado\": " + this.adotado +
+                "}";
     }
 }

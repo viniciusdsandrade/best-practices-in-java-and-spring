@@ -1,14 +1,24 @@
 package br.com.alura.adopet.api.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static br.com.alura.adopet.api.service.ShallowOrDeepCopy.verifyAndCopy;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity(name = "Tutor")
 @Table(name = "tb_tutor",
         schema = "db_adopet")
@@ -16,25 +26,42 @@ public class Tutor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @NotBlank
-    @Column(name = "nome")
+    @NotBlank(message = "O nome é obrigatório")
     private String nome;
 
-    @NotBlank
+    @NotBlank(message = "O telefone é obrigatório")
     @Pattern(regexp = "\\(?\\d{2}\\)?\\d?\\d{4}-?\\d{4}")
-    @Column(name = "telefone")
     private String telefone;
 
-    @NotBlank
-    @Email
-    @Column(name = "email")
+    @NotBlank(message = "O email é obrigatório")
+    @Email(message = "O email é inválido")
     private String email;
 
     @OneToMany(mappedBy = "tutor")
-    private List<Adocao> adocoes;
+    @Setter(AccessLevel.NONE)
+    private List<Adocao> adocoes = new ArrayList<>();
+
+    private void addAdocao(Adocao adocao) {
+        this.adocoes.add(adocao);
+    }
+
+    public Tutor(Tutor tutor) {
+        if (tutor == null) throw new IllegalArgumentException("Tutor não pode ser nulo");
+
+        this.id = (Long) verifyAndCopy(tutor.id);
+        this.nome = (String) verifyAndCopy(tutor.nome);
+        this.telefone = (String) verifyAndCopy(tutor.telefone);
+        this.email = (String) verifyAndCopy(tutor.email);
+
+        if (tutor.adocoes != null) {
+            this.adocoes = new ArrayList<>();
+            for (Adocao adocao : tutor.adocoes) {
+                this.adocoes.add(new Adocao(adocao));
+            }
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -60,43 +87,13 @@ public class Tutor {
         return hash;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<Adocao> getAdocoes() {
-        return adocoes;
-    }
-
-    public void setAdocoes(List<Adocao> adocoes) {
-        this.adocoes = adocoes;
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\": " + this.id +
+                ", \"nome\": \"" + this.nome + "\"" +
+                ", \"telefone\": \"" + this.telefone + "\"" +
+                ", \"email\": \"" + this.email + "\"" +
+                "}";
     }
 }
