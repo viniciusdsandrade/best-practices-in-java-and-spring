@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GlobalExceptionHandler {
+    
     @Operation(summary = "Handle Method Argument Not Valid Exception")
     @ApiResponse(responseCode = "400", description = "Method Argument Not Valid")
     @ExceptionHandler(MethodArgumentNotValidException.class)

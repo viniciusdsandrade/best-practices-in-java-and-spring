@@ -47,9 +47,12 @@ public class AdocaoServiceImpl implements AdocaoService {
 
         Pet pet = petRepository.getReferenceById(dto.idPet());
         Tutor tutor = tutorRepository.getReferenceById(dto.idTutor());
+        
         validacoes.forEach(validacao -> validacao.validar(dto));
+        
         Adocao adocao = new Adocao(tutor, pet, dto.motivo());
         repository.save(adocao);
+        
         enviarEmailParaAbrigo(adocao);
     }
 
@@ -58,7 +61,9 @@ public class AdocaoServiceImpl implements AdocaoService {
     public void aprovar(AprovacaoAdocaoDto dto) {
         Adocao adocao = repository.getReferenceById(dto.idAdocao());
         adocao.aprovar();
+        
         repository.save(adocao);
+        
         enviarEmailAprovacao(adocao);
     }
 
@@ -67,7 +72,9 @@ public class AdocaoServiceImpl implements AdocaoService {
     public void reprovar(ReprovacaoAdocaoDto dto) {
         Adocao adocao = repository.getReferenceById(dto.idAdocao());
         adocao.reprovar(dto.justificativa());
+        
         repository.save(adocao);
+        
         enviarEmailReprovacao(adocao);
     }
 

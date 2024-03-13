@@ -1,5 +1,7 @@
 package br.com.alura.adopet.api.model;
 
+import br.com.alura.adopet.api.dto.tutor.AtualizacaoTutorDto;
+import br.com.alura.adopet.api.dto.tutor.CadastroTutorDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +17,6 @@ import java.util.Objects;
 
 import static br.com.alura.adopet.api.service.ShallowOrDeepCopy.verifyAndCopy;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,21 +28,25 @@ public class Tutor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank(message = "O nome é obrigatório")
     private String nome;
-
-    @NotBlank(message = "O telefone é obrigatório")
-    @Pattern(regexp = "\\(?\\d{2}\\)?\\d?\\d{4}-?\\d{4}")
     private String telefone;
-
-    @NotBlank(message = "O email é obrigatório")
-    @Email(message = "O email é inválido")
     private String email;
 
     @OneToMany(mappedBy = "tutor")
     @Setter(AccessLevel.NONE)
     private List<Adocao> adocoes = new ArrayList<>();
+
+    public Tutor(CadastroTutorDto cadastroTutorDto) {
+        this.nome = cadastroTutorDto.nome();
+        this.telefone = cadastroTutorDto.telefone();
+        this.email = cadastroTutorDto.email();
+    }
+    
+    public void atualizarDados(AtualizacaoTutorDto tutorDto) {
+        this.nome = tutorDto.nome();
+        this.telefone = tutorDto.telefone();
+        this.email = tutorDto.email();
+    }
 
     private void addAdocao(Adocao adocao) {
         this.adocoes.add(adocao);
@@ -70,9 +75,9 @@ public class Tutor {
         if (o == null) return false;
         if (this.getClass() != o.getClass()) return false;
 
-        Tutor tutor = (Tutor) o;
+        Tutor that = (Tutor) o;
 
-        return Objects.equals(id, tutor.id);
+        return Objects.equals(this.id, that.id);
     }
 
     @Override
@@ -80,7 +85,7 @@ public class Tutor {
         final int prime = 31;
         int hash = 1;
 
-        hash *= prime + ((id == null) ? 0 : id.hashCode());
+        hash *= prime + ((this.id == null) ? 0 : this.id.hashCode());
 
         if (hash < 0) hash *= -1;
 

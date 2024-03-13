@@ -1,5 +1,6 @@
 package br.com.alura.adopet.api.model;
 
+import br.com.alura.adopet.api.dto.pet.CadastroPetDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -64,6 +65,21 @@ public class Pet {
         this.adotado = (Boolean) verifyAndCopy(copy.adotado);
         this.abrigo = (Abrigo) verifyAndCopy(copy.abrigo);
         this.adocao = (Adocao) verifyAndCopy(copy.adocao);
+    }
+
+    public Pet(Abrigo abrigo, CadastroPetDto dto) {
+
+        if (abrigo == null) throw new IllegalArgumentException("Abrigo não pode ser nulo");
+        if (dto == null) throw new IllegalArgumentException("PetDto não pode ser nulo");
+
+        this.tipo = dto.tipo();
+        this.nome = dto.nome();
+        this.raca = dto.raca();
+        this.idade = dto.idade();
+        this.cor = dto.cor();
+        this.peso = dto.peso();
+        this.abrigo = abrigo;
+        this.adotado = false;
     }
 
     @Override
