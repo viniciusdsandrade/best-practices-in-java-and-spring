@@ -9,4 +9,8 @@ public record AbrigoDto(
     public AbrigoDto(Abrigo abrigo) {
         this(abrigo.getId(), abrigo.getNome());
     }
+    
+    public AbrigoDto(CadastroAbrigoDto dto) {
+        this(null, dto.nome());
+    }
 }

@@ -1,5 +1,6 @@
 package br.com.alura.adopet.api.model;
 
+import br.com.alura.adopet.api.model.enuns.StatusAdocao;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

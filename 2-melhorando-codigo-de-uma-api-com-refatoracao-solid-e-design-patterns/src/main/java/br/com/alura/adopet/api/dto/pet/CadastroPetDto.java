@@ -1,6 +1,6 @@
 package br.com.alura.adopet.api.dto.pet;
 
-import br.com.alura.adopet.api.model.TipoPet;
+import br.com.alura.adopet.api.model.enuns.TipoPet;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

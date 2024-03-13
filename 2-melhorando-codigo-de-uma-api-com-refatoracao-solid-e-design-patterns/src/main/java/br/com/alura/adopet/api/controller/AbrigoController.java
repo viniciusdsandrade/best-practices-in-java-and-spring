@@ -38,18 +38,26 @@ public class AbrigoController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<String> cadastrar(@RequestBody @Valid CadastroAbrigoDto abrigo) {
+    public ResponseEntity<Void> cadastrar(@RequestBody @Valid CadastroAbrigoDto abrigo) {
         abrigoService.cadastrar(abrigo);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AbrigoDto> buscarPorId(@PathVariable Long id) {
+        try {
+            AbrigoDto abrigo = abrigoService.buscarPorId(id);
+            return ResponseEntity.ok(abrigo);
+        } catch (EntityNotFoundException exception) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/{idOuNome}/pets")
     public ResponseEntity<List<PetDto>> listarPets(@PathVariable String idOuNome) {
         try {
-            List<PetDto> petsDoAbrigo = abrigoService.listarPetsDoAbrigo(idOuNome);
-            return ResponseEntity.ok(petsDoAbrigo);
-        } catch (ValidacaoException exception) {
-            return ResponseEntity.badRequest().build();
+            List<PetDto> pets = abrigoService.listarPetsDoAbrigo(idOuNome);
+            return ResponseEntity.ok(pets);
         } catch (EntityNotFoundException exception) {
             return ResponseEntity.notFound().build();
         }

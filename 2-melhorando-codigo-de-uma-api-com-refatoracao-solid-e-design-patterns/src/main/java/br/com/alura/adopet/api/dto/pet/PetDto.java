@@ -1,7 +1,7 @@
 package br.com.alura.adopet.api.dto.pet;
 
 import br.com.alura.adopet.api.model.Pet;
-import br.com.alura.adopet.api.model.TipoPet;
+import br.com.alura.adopet.api.model.enuns.TipoPet;
 
 public record PetDto(Long id, 
                      TipoPet tipo, 

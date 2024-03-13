@@ -66,4 +66,12 @@ public class AbrigoServiceImpl implements AbrigoService {
 
         return optional.orElseThrow(() -> new ValidacaoException("Abrigo não encontrado"));
     }
+
+    @Override
+    public AbrigoDto buscarPorId(Long id) {
+        return abrigoRepository
+                .findById(id)
+                .map(AbrigoDto::new)
+                .orElseThrow(() -> new ValidacaoException("Abrigo não encontrado"));
+    }
 }

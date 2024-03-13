@@ -16,4 +16,6 @@ public interface AbrigoService {
     List<PetDto> listarPetsDoAbrigo(String idOuNome);
 
     Abrigo carregarAbrigo(String idOuNome);
+
+    AbrigoDto buscarPorId(Long id);
 }
