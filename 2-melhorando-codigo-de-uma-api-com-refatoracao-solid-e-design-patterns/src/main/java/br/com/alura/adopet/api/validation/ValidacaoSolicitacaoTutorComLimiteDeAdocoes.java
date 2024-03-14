@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ValidacaoTutorComLimiteDeAdocoes implements ValidacaoAdocao {
+public class ValidacaoSolicitacaoTutorComLimiteDeAdocoes implements ValidacaoSolicitacaoAdocao {
 
     private final AdocaoRepository adocaoRepository;
     private final TutorRepository tutorRepository;
 
-    public ValidacaoTutorComLimiteDeAdocoes(AdocaoRepository adocaoRepository,
-                                            TutorRepository tutorRepository) {
+    public ValidacaoSolicitacaoTutorComLimiteDeAdocoes(AdocaoRepository adocaoRepository,
+                                                       TutorRepository tutorRepository) {
         this.adocaoRepository = adocaoRepository;
         this.tutorRepository = tutorRepository;
     }

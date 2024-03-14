@@ -7,11 +7,11 @@ import br.com.alura.adopet.api.repository.AdocaoRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidacaoPetComAdocaoEmAndamento implements ValidacaoAdocao {
+public class ValidacaoPetComSolicitacaoAdocaoEmAndamento implements ValidacaoSolicitacaoAdocao {
 
     private final AdocaoRepository repository;
 
-    public ValidacaoPetComAdocaoEmAndamento(AdocaoRepository repository) {
+    public ValidacaoPetComSolicitacaoAdocaoEmAndamento(AdocaoRepository repository) {
         this.repository = repository;
     }
 

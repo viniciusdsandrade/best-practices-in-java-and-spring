@@ -32,5 +32,4 @@ public class CalculadoraProbabilidadeAdocao {
 
         return nota;
     }
-
 }

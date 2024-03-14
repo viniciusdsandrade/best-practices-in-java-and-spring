@@ -7,6 +7,7 @@ import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.model.enuns.ProbabilidadeAdocao;
 import br.com.alura.adopet.api.model.enuns.TipoPet;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,16 +40,21 @@ O padrão GWT também é conhecido como padrão BDD (Behavior-Driven Development
 @DisplayName("Classe CalculadoraProbabilidadeAdocao")
 class CalculadoraProbabilidadeAdocaoTest {
 
-    @Test
-    @DisplayName("Deve retornar alta probabilidade quando for gato jovem e leve")
-    void deveRetornarAltaProbabilidadeQuandoForGatoJovemELeve() {
+    private Abrigo abrigo;
 
-        // Arrange
-        Abrigo abrigo = new Abrigo(new CadastroAbrigoDto(
+    @BeforeEach
+    void setUp() {
+        abrigo = new Abrigo(new CadastroAbrigoDto(
                 "Abrigo feliz",
                 "94999999999",
                 "abrigofeliz@email.com.br"
         ));
+    }
+
+    @Test
+    @DisplayName("Deve retornar alta probabilidade quando for gato jovem e leve")
+    void deveRetornarAltaProbabilidadeQuandoForGatoJovemELeve() {
+
         Pet pet = new Pet(abrigo, new CadastroPetDto(
                 TipoPet.GATO,
                 "Miau",
@@ -70,11 +76,7 @@ class CalculadoraProbabilidadeAdocaoTest {
     @DisplayName("Deve retornar media probabilidade quando for gato idoso e leve")
     void deveRetornarMediaProbabilidadeQuandoForGatoIdosoELeve() {
 
-        Abrigo abrigo = new Abrigo(new CadastroAbrigoDto(
-                "Abrigo feliz",
-                "94999999999",
-                "abrigofeliz@email.com.br"
-        ));
+        
         Pet pet = new Pet(abrigo, new CadastroPetDto(
                 TipoPet.GATO,
                 "Miau",
@@ -88,5 +90,125 @@ class CalculadoraProbabilidadeAdocaoTest {
         ProbabilidadeAdocao probabilidade = calculadora.calcular(pet);
 
         Assertions.assertEquals(ProbabilidadeAdocao.MEDIA, probabilidade);
+    }
+
+    @Test
+    @DisplayName("Deve retornar baixa probabilidade quando for cachorro idoso e pesado")
+    void deveRetornarBaixaProbabilidadeQuandoForCachorroIdosoEPesado() {
+
+
+        Pet pet = new Pet(abrigo, new CadastroPetDto(
+                TipoPet.CACHORRO,
+                "Rex",
+                "Labrador",
+                15,
+                "Preto",
+                20.0f
+        ));
+
+        CalculadoraProbabilidadeAdocao calculadora = new CalculadoraProbabilidadeAdocao();
+        ProbabilidadeAdocao probabilidade = calculadora.calcular(pet);
+
+        Assertions.assertEquals(ProbabilidadeAdocao.BAIXA, probabilidade);
+    }
+
+    @Test
+    @DisplayName("Deve retornar alta probabilidade quando for cachorro jovem e leve")
+    void deveRetornarAltaProbabilidadeQuandoForCachorroJovemELeve() {
+
+
+        Pet pet = new Pet(abrigo, new CadastroPetDto(
+                TipoPet.CACHORRO,
+                "Rex",
+                "Labrador",
+                4,
+                "Preto",
+                10.0f
+        ));
+
+        CalculadoraProbabilidadeAdocao calculadora = new CalculadoraProbabilidadeAdocao();
+        ProbabilidadeAdocao probabilidade = calculadora.calcular(pet);
+
+        Assertions.assertEquals(ProbabilidadeAdocao.ALTA, probabilidade);
+    }
+
+    @Test
+    @DisplayName("Deve retornar media probabilidade quando for cachorro idoso e leve")
+    void deveRetornarMediaProbabilidadeQuandoForCachorroIdosoELeve() {
+
+
+        Pet pet = new Pet(abrigo, new CadastroPetDto(
+                TipoPet.CACHORRO,
+                "Rex",
+                "Labrador",
+                15,
+                "Preto",
+                10.0f
+        ));
+
+        CalculadoraProbabilidadeAdocao calculadora = new CalculadoraProbabilidadeAdocao();
+        ProbabilidadeAdocao probabilidade = calculadora.calcular(pet);
+
+        Assertions.assertEquals(ProbabilidadeAdocao.MEDIA, probabilidade);
+    }
+
+    @Test
+    @DisplayName("Deve retornar alta probabilidade quando for cachorro jovem e pesado")
+    void deveRetornarMediaProbabilidadeQuandoForCachorroJovemEPesado() {
+
+
+        Pet pet = new Pet(abrigo, new CadastroPetDto(
+                TipoPet.CACHORRO,
+                "Rex",
+                "Labrador",
+                4,
+                "Preto",
+                20.0f
+        ));
+
+        CalculadoraProbabilidadeAdocao calculadora = new CalculadoraProbabilidadeAdocao();
+        ProbabilidadeAdocao probabilidade = calculadora.calcular(pet);
+
+        Assertions.assertEquals(ProbabilidadeAdocao.ALTA, probabilidade);
+    }
+
+    @Test
+    @DisplayName("Deve retornar baixa probabilidade quando for gato idoso e pesado")
+    void deveRetornarBaixaProbabilidadeQuandoForGatoIdosoEPesado() {
+
+
+        Pet pet = new Pet(abrigo, new CadastroPetDto(
+                TipoPet.GATO,
+                "Miau",
+                "Siames",
+                15,
+                "Cinza",
+                15.0f
+        ));
+
+        CalculadoraProbabilidadeAdocao calculadora = new CalculadoraProbabilidadeAdocao();
+        ProbabilidadeAdocao probabilidade = calculadora.calcular(pet);
+
+        Assertions.assertEquals(ProbabilidadeAdocao.BAIXA, probabilidade);
+    }
+
+    @Test
+    @DisplayName("Deve retornar alta probabilidade quando for gato jovem e pesado")
+    void deveRetornarMediaProbabilidadeQuandoForGatoJovemEPesado() {
+
+
+        Pet pet = new Pet(abrigo, new CadastroPetDto(
+                TipoPet.GATO,
+                "Miau",
+                "Siames",
+                4,
+                "Cinza",
+                15.0f
+        ));
+
+        CalculadoraProbabilidadeAdocao calculadora = new CalculadoraProbabilidadeAdocao();
+        ProbabilidadeAdocao probabilidade = calculadora.calcular(pet);
+
+        Assertions.assertEquals(ProbabilidadeAdocao.ALTA, probabilidade);
     }
 }

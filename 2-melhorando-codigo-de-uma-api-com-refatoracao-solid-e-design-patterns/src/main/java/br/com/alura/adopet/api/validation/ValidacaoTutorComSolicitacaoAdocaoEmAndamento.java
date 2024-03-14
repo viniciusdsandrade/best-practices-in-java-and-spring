@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class ValidacaoTutorComAdocaoEmAndamento implements ValidacaoAdocao{
+public class ValidacaoTutorComSolicitacaoAdocaoEmAndamento implements ValidacaoSolicitacaoAdocao {
 
     private final AdocaoRepository repository;
     private final TutorRepository tutorRepository;
 
-    public ValidacaoTutorComAdocaoEmAndamento(AdocaoRepository repository,
-                                              TutorRepository tutorRepository) {
+    public ValidacaoTutorComSolicitacaoAdocaoEmAndamento(AdocaoRepository repository,
+                                                         TutorRepository tutorRepository) {
         this.repository = repository;
         this.tutorRepository = tutorRepository;
     }

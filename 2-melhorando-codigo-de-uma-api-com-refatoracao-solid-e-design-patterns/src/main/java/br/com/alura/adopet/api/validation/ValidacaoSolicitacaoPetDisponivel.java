@@ -7,18 +7,17 @@ import br.com.alura.adopet.api.repository.PetRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidacaoPetDisponivel implements ValidacaoAdocao {
+public class ValidacaoSolicitacaoPetDisponivel implements ValidacaoSolicitacaoAdocao {
 
     private final PetRepository petRepository;
 
-    public ValidacaoPetDisponivel(PetRepository petRepository) {
+    public ValidacaoSolicitacaoPetDisponivel(PetRepository petRepository) {
         this.petRepository = petRepository;
     }
 
     @Override
     public void validar(SolicitacaoAdocaoDto dto) {
         Pet pet = petRepository.getReferenceById(dto.idPet());
-        if (pet.getAdotado()) throw new ValidacaoException("Pet ou tutor não encontrado");
-
+        if (pet.getAdotado()) throw new ValidacaoException("Pet já foi adotado");
     }
 }
