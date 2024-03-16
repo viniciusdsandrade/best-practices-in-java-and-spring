@@ -12,12 +12,10 @@ import br.com.alura.adopet.api.validation.ValidacaoSolicitacaoAdocao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,8 +41,14 @@ class AbrigoServiceImplTest {
     @Mock
     private EmailServiceImpl emailServiceImpl;
 
+    @Spy
+    private List<ValidacaoSolicitacaoAdocao> validacoes = new ArrayList<>();
+
     @Mock
-    private List<ValidacaoSolicitacaoAdocao> validacoes;
+    private ValidacaoSolicitacaoAdocao validador1;
+
+    @Mock
+    private ValidacaoSolicitacaoAdocao validador2;
 
     @Mock
     private Pet pet;
@@ -62,6 +66,7 @@ class AbrigoServiceImplTest {
     private ArgumentCaptor<Adocao> adocaoCaptor;
 
     @Test
+    @DisplayName("Deveria salvar adocao ao solicitar")
     void deveriaSalvarAdocaoAoSolicitar() {
 
         //ARRANGE
@@ -79,5 +84,25 @@ class AbrigoServiceImplTest {
         assertEquals(pet, adocao.getPet());
         assertEquals(tutor, adocao.getTutor());
         assertEquals(dto.motivo(), adocao.getMotivo());
+    }
+
+    @Test
+    @DisplayName("Deveria chamar validadores de adoção ao solicitar")
+    void deveriaChamarValidadoresDeAdocaoAoSolicitar() {
+
+        //ARRANGE
+        this.dto = new SolicitacaoAdocaoDto(10L, 10L, "Motivo qualquer");
+        given(petRepository.getReferenceById(dto.idPet())).willReturn(pet);
+        given(tutorRepository.getReferenceById(dto.idTutor())).willReturn(tutor);
+        given(pet.getAbrigo()).willReturn(abrigo);
+        validacoes.add(validador1);
+        validacoes.add(validador2);
+
+        //ACT
+        adocaoServiceImpl.solicitar(dto);
+
+        //ASSERT
+        then(validador1).should().validar(dto);
+        then(validador2).should().validar(dto);
     }
 }
