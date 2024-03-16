@@ -76,7 +76,7 @@ class CalculadoraProbabilidadeAdocaoTest {
     @DisplayName("Deve retornar media probabilidade quando for gato idoso e leve")
     void deveRetornarMediaProbabilidadeQuandoForGatoIdosoELeve() {
 
-        
+
         Pet pet = new Pet(abrigo, new CadastroPetDto(
                 TipoPet.GATO,
                 "Miau",

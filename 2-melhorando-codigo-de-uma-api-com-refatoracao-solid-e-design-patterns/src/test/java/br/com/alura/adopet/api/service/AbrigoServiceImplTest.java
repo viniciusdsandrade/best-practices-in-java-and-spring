@@ -1,4 +1,4 @@
-package br.com.alura.adopet.api.service.impl;
+package br.com.alura.adopet.api.service;
 
 import br.com.alura.adopet.api.dto.adocao.SolicitacaoAdocaoDto;
 import br.com.alura.adopet.api.model.Abrigo;
@@ -8,6 +8,8 @@ import br.com.alura.adopet.api.model.Tutor;
 import br.com.alura.adopet.api.repository.AdocaoRepository;
 import br.com.alura.adopet.api.repository.PetRepository;
 import br.com.alura.adopet.api.repository.TutorRepository;
+import br.com.alura.adopet.api.service.impl.AdocaoServiceImpl;
+import br.com.alura.adopet.api.service.impl.EmailServiceImpl;
 import br.com.alura.adopet.api.validation.ValidacaoSolicitacaoAdocao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

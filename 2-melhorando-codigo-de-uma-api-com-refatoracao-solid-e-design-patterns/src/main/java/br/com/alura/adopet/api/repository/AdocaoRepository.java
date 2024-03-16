@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 public interface AdocaoRepository extends JpaRepository<Adocao, Long> {
     
     boolean existsByPetIdAndStatus(Long petId, StatusAdocao status);
+
+    boolean existsByTutorIdAndStatus(Long tutorId, StatusAdocao status);
+
+    Integer countByTutorIdAndStatus(Long tutorId, StatusAdocao status);
 }

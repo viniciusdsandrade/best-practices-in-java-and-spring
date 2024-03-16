@@ -3,6 +3,7 @@ package br.com.alura.adopet.api.controller;
 import br.com.alura.adopet.api.dto.adocao.AprovacaoAdocaoDto;
 import br.com.alura.adopet.api.dto.adocao.ReprovacaoAdocaoDto;
 import br.com.alura.adopet.api.dto.adocao.SolicitacaoAdocaoDto;
+import br.com.alura.adopet.api.exception.ValidacaoException;
 import br.com.alura.adopet.api.service.AdocaoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class AdocaoController {
         try {
             adocaoService.solicitar(adocao);
             return ResponseEntity.ok().build();
+        } catch (ValidacaoException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
@@ -36,6 +39,8 @@ public class AdocaoController {
         try {
             adocaoService.aprovar(adocao);
             return ResponseEntity.ok().build();
+        } catch (ValidacaoException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
@@ -46,6 +51,8 @@ public class AdocaoController {
         try {
             adocaoService.reprovar(adocao);
             return ResponseEntity.ok().build();
+        } catch (ValidacaoException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

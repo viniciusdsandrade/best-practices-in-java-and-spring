@@ -51,6 +51,7 @@ class AdocaoControllerTest {
     }
 
     @Test
+    @DisplayName("Deveria devolver codigo 200 para solicitacao de adocao sem erros")
     void deveriaDevolverCodigo200ParaSolicitacaoDeAdocaoSemErros() throws Exception {
 
         //ARRANGE

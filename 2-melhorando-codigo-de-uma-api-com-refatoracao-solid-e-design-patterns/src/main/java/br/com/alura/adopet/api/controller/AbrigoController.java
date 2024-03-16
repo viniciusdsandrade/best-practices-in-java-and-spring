@@ -48,8 +48,10 @@ public class AbrigoController {
         try {
             AbrigoDto abrigo = abrigoService.buscarPorId(id);
             return ResponseEntity.ok(abrigo);
-        } catch (EntityNotFoundException exception) {
+        } catch (ValidacaoException exception) {
             return ResponseEntity.notFound().build();
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -58,8 +60,10 @@ public class AbrigoController {
         try {
             List<PetDto> pets = abrigoService.listarPetsDoAbrigo(idOuNome);
             return ResponseEntity.ok(pets);
-        } catch (EntityNotFoundException exception) {
+        } catch (ValidacaoException exception) {
             return ResponseEntity.notFound().build();
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -72,9 +76,9 @@ public class AbrigoController {
             return ResponseEntity.ok().build();
 
         } catch (ValidacaoException exception) {
-            return ResponseEntity.badRequest().build();
-        } catch (EntityNotFoundException exception) {
             return ResponseEntity.notFound().build();
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }

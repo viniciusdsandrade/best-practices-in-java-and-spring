@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Testes para validação de tutor com adoção em andamento")
-class ValidacaoTutorComAdocaoEmAndamentoTest {
+@DisplayName("Testes para validação de solicitação de adoção por tutor com limite de adoções")
+class ValidacaoSolicitacaoTutorComLimiteDeAdocoesTest {
 
     @InjectMocks
-    private ValidacaoTutorComSolicitacaoAdocaoEmAndamento validador;
+    private ValidacaoSolicitacaoTutorComLimiteDeAdocoes validador;
 
     @Mock
     private AdocaoRepository adocaoRepository;
@@ -28,22 +28,27 @@ class ValidacaoTutorComAdocaoEmAndamentoTest {
     private SolicitacaoAdocaoDto dto;
 
     @Test
-    @DisplayName("Deveria não permitir solicitação de adoção para tutor com adoção em andamento")
-    void naoDeveriaPermitirSolicitacaoDeAdocaoTutorComAdocaoEmAndamento() {
-        //Arrange
-        given(adocaoRepository.existsByTutorIdAndStatus(dto.idTutor(), StatusAdocao.AGUARDANDO_AVALIACAO)).willReturn(true);
+    @DisplayName("Deveria permitir solicitação de adoção de pet")
+    void naoDeveriaPermitirSolicitacaoDeAdocaoTutorAtingiuLimiteDe5Adocoes() {
 
-        //Act + Assert
+        // ARRANGE
+        given(dto.idTutor()).willReturn(1L);
+        given(adocaoRepository.countByTutorIdAndStatus(1L, StatusAdocao.REPROVADO)).willReturn(5);
+
+        //ASSERT + ACT
         assertThrows(ValidacaoException.class, () -> validador.validar(dto));
     }
 
-    @Test
-    @DisplayName("Deveria permitir solicitação de adoção para tutor sem adoção em andamento")
-    void deveriaPermitirSolicitacaoDeAdocaoTutorSemAdocaoEmAndamento() {
-        //Arrange
-        given(adocaoRepository.existsByTutorIdAndStatus(dto.idTutor(), StatusAdocao.AGUARDANDO_AVALIACAO)).willReturn(false);
 
-        //Act + Assert
+    @Test
+    @DisplayName("Não deveria permitir solicitação de adoção de pet")
+    void deveriaPermitirSolicitacaoDeAdocaoTutorNaoAtingiuLimiteDe5Adocoes() {
+
+        // ARRANGE
+        given(dto.idTutor()).willReturn(1L);
+        given(adocaoRepository.countByTutorIdAndStatus(1L, StatusAdocao.APROVADO)).willReturn(4);
+
+        //ASSERT + ACT
         assertDoesNotThrow(() -> validador.validar(dto));
     }
 

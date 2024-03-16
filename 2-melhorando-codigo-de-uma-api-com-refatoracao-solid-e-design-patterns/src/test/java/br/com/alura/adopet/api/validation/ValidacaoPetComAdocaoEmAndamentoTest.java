@@ -33,7 +33,10 @@ class ValidacaoPetComAdocaoEmAndamentoTest {
     @DisplayName("Deveria permitir solicitação de adoção de pet sem adoção em andamento")
     void deveriaPermitirSolicitacaoDeAdocaoPetSemAdocaoEmAndamento() {
         // ARRANGE
-        given(adocaoRepository.existsByPetIdAndStatus(any(Long.class), any(StatusAdocao.class))).willReturn(false);
+        given(adocaoRepository.existsByPetIdAndStatus(
+                dto.idPet(),
+                StatusAdocao.AGUARDANDO_AVALIACAO)
+        ).willReturn(false);
 
         // ASSERT + ACT
         assertDoesNotThrow(() -> validacao.validar(dto));
@@ -43,8 +46,10 @@ class ValidacaoPetComAdocaoEmAndamentoTest {
     @DisplayName("Não deveria permitir solicitação de adoção de pet com adoção em andamento")
     void naoDeveriaPermitirSolicitacaoDeAdocaoPetComAdocaoEmAndamento() {
         // ARRANGE
-        given(adocaoRepository.existsByPetIdAndStatus(any(Long.class), any(StatusAdocao.class))).willReturn(true);
-
+        given(adocaoRepository.existsByPetIdAndStatus(
+                dto.idPet(),
+                StatusAdocao.AGUARDANDO_AVALIACAO
+        )).willReturn(true);
         // ASSERT + ACT
         assertThrows(ValidacaoException.class, () -> validacao.validar(dto));
     }
